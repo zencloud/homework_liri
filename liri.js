@@ -2,21 +2,15 @@
 // Request entertainment information from a CLI
 
 // App Uses Strict Mode
-//"use strict";
+"use strict";
 
 // Init: Environment Variables
 require("dotenv").config();
+let app = require('./functions');
 
-// Modules
-const App = require('./functions.js');
-const Spotify = require('node-spotify-api');
-const Axios = require('axios');
-const Moment = require('moment');
-const FS = require('fs');
-
-// Keys: Load keys
-let appKeys = require("./keys.js");
-let spotifySearch = new Spotify(appKeys.spotify);
+// Init: Core search module
+const search = require('./search');
+let findMedia = new search();
 
 // --- End Config
 // ------------------------------------------------------------
@@ -44,80 +38,44 @@ if (userCMD.length === 2) {
 // Input format correct. Parse values.
 if (userCMD.length >= 3) {
 
-    // Cycle through command options
+    // Setup Query
+    let inputType = userCMD[2];
+    let inputQuery = userCMD.splice(3).join(' ');
 
-    switch (userCMD[2]) {
-
-
-        // Random
+    // Determine command
+    switch (inputType) {
         // No break to change command to random
+
         case 'random-command':
-            userCMD[2] = 'spotify-this';
+            //
+            break;
 
         // Search Bands In Town
         case 'concert-this':
 
             // Missing Parameter
-            if (!userCMD[3]) {
-                
+            if (!inputQuery) {
                 // No search parameter found, set default 
-                userCMD[3] = 'Eminem';
+                findMedia.concert('Eminem');
             }
 
             // Begin Search
-            if (userCMD[3]) {
-                Axios.get(`https://rest.bandsintown.com/artists/${userCMD[3]}/events?app_id=codingbootcamp`)
-                    .catch(function (error) {
-                        App.printe(error);
-                    })
-                    .then(function (reply) {
-
-                        // Setup veny object from reply
-                        let venuData = reply.data[0];
-
-                        // Datetime converse for venue time
-                        let venuDate = Moment(venuData.datetime).format('MM/DD/YYYY') + ' at ' + Moment(venuData.datetime).format('h:mma');
-                        App.printd(`Results for: ${userCMD[3]}`);
-                        App.printl(`Venu Name: ${venuData.venue.name}`);
-                        App.printl(`Venu Location: ${venuData.venue.city} ${venuData.venue.region}`);
-                        App.printl(`Venu Date: ${venuDate}`)
-
-                    });
+            if (inputQuery) {
+                findMedia.concert(inputQuery);
             }
             break;
 
         // Search by song titles from spotify
         case 'spotify-this':
 
-            // Missing params
-            if (!userCMD[3]) {
-                userCMD[3] = 'The Sign Ace of Base';
+            // Missing params, default to The Sign by Ace of Base
+            if (!inputQuery) {
+                findMedia.spotify('The Sign Ace of Base');
             }
 
-            // Search spotify songs
-            if (userCMD[3]) {
-
-                // Create Song Query
-                let spotifyQueryConfig = {
-                    type: 'track',
-                    query: userCMD[3],
-                    limit: 1
-                }
-
-                // Search spotify for user input
-                spotifySearch.search(spotifyQueryConfig)
-                    .catch(function (error) {
-                        //App.printe(JSON.parse(error.message));
-                    })
-                    .then(function (reply) {
-
-                        let trackInfo = reply.tracks.items[0];
-                        App.printd(`Results for: ${userCMD[3]}`);
-                        App.printl(`Song Name: ${trackInfo.name}`);
-                        App.printl(`Artist Name: ${trackInfo.artists[0].name}`);
-                        App.printl(`Album: ${trackInfo.album.name}`);
-                        App.printl(`Preview: ${trackInfo.preview_url}`)
-                    });
+            // Search spotify for user query
+            if (inputQuery) {
+                findMedia.spotify(inputQuery);
             }
             break;
         
@@ -125,32 +83,14 @@ if (userCMD.length >= 3) {
         case 'movie-this':
 
             // Missing Params
-            if (!userCMD[3]) {
+            if (!inputQuery) {
                 App.printe('Missing Parameters!');                
             }
 
             // Movie Search
-            if (userCMD[3]) {
-                Axios.get(`http://www.omdbapi.com/?apikey=trilogy&t=${userCMD[3]}`)
-                    .catch(function(error) {
-                        App.printe(error);
-                    })
-                    .then(function(reply) {
-                        
-                        // Movie Data
-                        let movieData = reply.data;
-                        App.printd(`Search for: ${userCMD[3]}`);
-                        App.printl(`Movie Name: ${movieData.Title}`);
-                        App.printl(`Year: ${movieData.Year}`);
-                        App.printl(`IMDB Rating: ${movieData.imdbRating}`);
-                        App.printl(`Rotten Tomatoes: ${movieData.Ratings[1].Value}`);
-                        App.printl(`Country: ${movieData.Country}`);
-                        App.printl(`Language: ${movieData.Language}`);
-                        App.printl(`Plot: ${movieData.Plot}`);
-                        App.printl(`Actors: ${movieData.Actors}`);
-                    });
+            if (inputQuery) {
+                findMedia.movie(inputQuery);
             }
-            // Movie
             break;
 
         case 'do-what-it-says':
@@ -158,7 +98,7 @@ if (userCMD.length >= 3) {
             break;
 
         default:
-            App.printe(`Unknown LIRI Command: ${userCMD[2]}`);
+            app.printe(`Unknown LIRI Command: ${inputType}`);
             break;
     }
 }

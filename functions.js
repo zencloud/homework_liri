@@ -1,4 +1,6 @@
 
+let axios = require('axios');
+
 // Print message divider
 module.exports.printd = function (option) {
 
@@ -22,11 +24,4 @@ module.exports.printe = function (value) {
 // Print message
 module.exports.printl = function (value) {
     console.log(value);
-}
-
-module.exports.param_check = function (userCMD) {
-    
-    if (!userCMD[3]) {
-        App.printe('Missing parameters!');
-    }
 }
