@@ -27,17 +27,28 @@ let userCMD = process.argv;
 
 // Input Validation
 // Input format invalid
+
 if (userCMD.length !== 4) {
-    App.printe('Not enough parameters');
+
+    // Spotify check
+    if (userCMD.length === 3 && userCMD[2] === 'spotify-this') {
+        userCMD[3] = 'The Sign Ace of Base';
+    } else {
+        App.printe('Not enough parameters');
+    }
 }
 
 // Input format correct. Parse values.
-if (userCMD.length === 4) {
+if (userCMD.length === 4) { 
 
     switch (userCMD[2]) {
 
+        // Search Bands In Town
         case 'concert-this':
             Axios.get(`https://rest.bandsintown.com/artists/${userCMD[3]}/events?app_id=codingbootcamp`)
+                .catch(function(error) {
+                    App.printe(error);
+                })
                 .then(function (reply) {
 
                     // Setup veny object from reply
@@ -52,9 +63,31 @@ if (userCMD.length === 4) {
 
                 });
             break;
-
+        
+        // Search by song titles from spotify
         case 'spotify-this':
-            // Spotify
+            
+            // Create Song Query
+            let spotifyQueryConfig = {
+                type: 'track',
+                query: userCMD[3],
+                limit: 1
+            }
+
+            // Search spotify for user input
+            spotifySearch.search(spotifyQueryConfig)
+                .catch(function(error) {
+                    //App.printe(JSON.parse(error.message));
+                })
+                .then(function(reply){
+                    
+                    let trackInfo = reply.tracks.items[0];
+                    App.printd(`Results for: ${userCMD[3]}`);
+                    App.printl(`Song Name: ${trackInfo.name}`);
+                    App.printl(`Artist Name: ${trackInfo.artists[0].name}`);
+                    App.printl(`Album: ${trackInfo.album.name}`);
+                    App.printl(`Preview: ${trackInfo.preview_url}`)
+                });
             break;
 
         case 'movie-this':
@@ -70,3 +103,7 @@ if (userCMD.length === 4) {
             break;
     }
 }
+
+
+// artists.name
+// album.name
