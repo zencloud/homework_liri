@@ -1,4 +1,3 @@
-// --- LIRI App Main Functions
 
 // Print message divider
 module.exports.printd = function (option) {
@@ -8,7 +7,6 @@ module.exports.printd = function (option) {
         console.log(`--- ${option} -----------------`);
     }
     else {
-        console.log('');
         console.log('--------------------');
     }
 }
@@ -20,6 +18,7 @@ module.exports.printe = function (value) {
     console.log(value);
     console.log(`----------------------------`);
 }
+
 // Print message
 module.exports.printl = function (value) {
     console.log(value);
