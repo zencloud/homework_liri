@@ -6,11 +6,45 @@
 
 // Init: Environment Variables
 require("dotenv").config();
-let app = require('./functions');
 
 // Init: Core search module
+const fs = require('fs');
+const app = require('./functions');
 const search = require('./search');
-let findMedia = new search();
+const findMedia = new search();
+const fileRandom = './random.txt';
+
+let validateInput = function(inputType, inputQuery) {
+        // Determine command
+        switch (inputType) {
+
+            case 'do-what-it-says':
+                fs.readFile('./random.txt', 'utf8', function (error, data) {
+                    data = data.split(',');
+                    validateInput(data[0], data[1]);
+                });
+                break;
+    
+            // Search Bands In Town
+            case 'concert-this':
+                inputQuery ? findMedia.concert(inputQuery) : findMedia.concert('Eminem');
+                break;
+    
+            // Search by song titles from spotify
+            case 'spotify-this':
+                inputQuery ? findMedia.spotify(inputQuery) : findMedia.spotify('The Sign Ace of Base');
+                break;
+    
+            // Search OPENMDB
+            case 'movie-this':
+                inputQuery ? findMedia.movie(inputQuery) : app.printe('Missing Parameters!');
+                break;
+    
+            default:
+                app.printe(`Unknown LIRI Command: ${inputType}`);
+                break;
+        }
+}
 
 // --- End Config
 // ------------------------------------------------------------
@@ -21,15 +55,15 @@ let userCMD = process.argv;
 
 // LIRI Tells you about itself
 if (userCMD.length === 2) {
-    App.printd();
-    App.printd('LIRI:');
-    App.printl('Language Interpretation and Recognition Interface');
-    App.printd();
-    App.printl('Available commands:');
-    App.printl('liri concert-this <artist>');
-    App.printl('liri spotify-this <song>');
-    App.printl('movie-this <movie>');
-    App.printl('do-what-it-says <movie>');
+    app.printd();
+    app.printd('LIRI:');
+    app.printl('Language Interpretation and Recognition Interface');
+    app.printd();
+    app.printl('Available commands:');
+    app.printl('liri concert-this <artist>');
+    app.printl('liri spotify-this <song>');
+    app.printl('movie-this <movie>');
+    app.printl('do-what-it-says <movie>');
 
     // Terminate early because we have no reason to processing anything else
     process.exit();
@@ -42,63 +76,5 @@ if (userCMD.length >= 3) {
     let inputType = userCMD[2];
     let inputQuery = userCMD.splice(3).join(' ');
 
-    // Determine command
-    switch (inputType) {
-        // No break to change command to random
-
-        case 'random-command':
-            //
-            break;
-
-        // Search Bands In Town
-        case 'concert-this':
-
-            // Missing Parameter
-            if (!inputQuery) {
-                // No search parameter found, set default 
-                findMedia.concert('Eminem');
-            }
-
-            // Begin Search
-            if (inputQuery) {
-                findMedia.concert(inputQuery);
-            }
-            break;
-
-        // Search by song titles from spotify
-        case 'spotify-this':
-
-            // Missing params, default to The Sign by Ace of Base
-            if (!inputQuery) {
-                findMedia.spotify('The Sign Ace of Base');
-            }
-
-            // Search spotify for user query
-            if (inputQuery) {
-                findMedia.spotify(inputQuery);
-            }
-            break;
-        
-        // Search OPENMDB
-        case 'movie-this':
-
-            // Missing Params
-            if (!inputQuery) {
-                App.printe('Missing Parameters!');                
-            }
-
-            // Movie Search
-            if (inputQuery) {
-                findMedia.movie(inputQuery);
-            }
-            break;
-
-        case 'do-what-it-says':
-            // Do what it says?
-            break;
-
-        default:
-            app.printe(`Unknown LIRI Command: ${inputType}`);
-            break;
-    }
+    validateInput(inputType, inputQuery);
 }

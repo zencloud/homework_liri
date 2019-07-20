@@ -1,5 +1,4 @@
 
-let axios = require('axios');
 
 // Print message divider
 module.exports.printd = function (option) {
