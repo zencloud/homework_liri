@@ -19,7 +19,7 @@ let validateInput = function(inputType, inputQuery) {
         switch (inputType) {
 
             case 'do-what-it-says':
-                fs.readFile('./random.txt', 'utf8', function (error, data) {
+                fs.readFile(fileRandom, 'utf8', function (error, data) {
                     data = data.split(',');
                     validateInput(data[0], data[1]);
                 });
@@ -65,7 +65,7 @@ if (userCMD.length === 2) {
     app.printl('movie-this <movie>');
     app.printl('do-what-it-says <movie>');
 
-    // Terminate early because we have no reason to processing anything else
+    // Terminate early because we have no reason to process anything else
     process.exit();
 }
 
@@ -76,5 +76,9 @@ if (userCMD.length >= 3) {
     let inputType = userCMD[2];
     let inputQuery = userCMD.splice(3).join(' ');
 
+    // Log input
+    fs.appendFile('log.txt', `${inputType}, ${inputQuery}`, function(){});
+    
+    // Validate input
     validateInput(inputType, inputQuery);
 }

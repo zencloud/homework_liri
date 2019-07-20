@@ -21,5 +21,9 @@ Full List:
 concert-this <artist>
 movie-this <movie>
 spotify-this <song>
-random-command
+do-what-it-says
 ```
+
+## Preview
+
+![alt text](imgs/gif.gif)
