@@ -13,6 +13,7 @@ const App = require('./functions.js');
 const Spotify = require('node-spotify-api');
 const Axios = require('axios');
 const Moment = require('moment');
+const FS = require('fs');
 
 // Keys: Load keys
 let appKeys = require("./keys.js");
@@ -81,11 +82,14 @@ if (userCMD.length >= 3) {
         // Search by song titles from spotify
         case 'spotify-this':
 
+            // Missing params
             if (!userCMD[3]) {
                 App.printe('Missing Parameters!');
             }
 
+            // Search spotify songs
             if (userCMD[3]) {
+
                 // Create Song Query
                 let spotifyQueryConfig = {
                     type: 'track',
@@ -109,8 +113,34 @@ if (userCMD.length >= 3) {
                     });
             }
             break;
-
+        
+        // Search OPENMDB
         case 'movie-this':
+
+            if (!userCMD[3]) {
+                App.printe('Missing Parameters!');                
+            }
+
+            if (userCMD[3]) {
+                Axios.get(`http://www.omdbapi.com/?apikey=trilogy&t=${userCMD[3]}`)
+                    .catch(function(error) {
+                        App.printe(error);
+                    })
+                    .then(function(reply) {
+                        
+                        // Movie Data
+                        let movieData = reply.data;
+                        App.printd(`Search for: ${userCMD[3]}`);
+                        App.printl(`Movie Name: ${movieData.Title}`);
+                        App.printl(`Year: ${movieData.Year}`);
+                        App.printl(`IMDB Rating: ${movieData.imdbRating}`);
+                        App.printl(`Rotten Tomatoes: ${movieData.Ratings[1].Value}`);
+                        App.printl(`Country: ${movieData.Country}`);
+                        App.printl(`Language: ${movieData.Language}`);
+                        App.printl(`Plot: ${movieData.Plot}`);
+                        App.printl(`Actors: ${movieData.Actors}`);
+                    });
+            }
             // Movie
             break;
 

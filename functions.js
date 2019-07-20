@@ -23,3 +23,10 @@ module.exports.printe = function (value) {
 module.exports.printl = function (value) {
     console.log(value);
 }
+
+module.exports.param_check = function (userCMD) {
+    
+    if (!userCMD[3]) {
+        App.printe('Missing parameters!');
+    }
+}
