@@ -1,7 +1,6 @@
 // LIRI Application
 // Request entertainment information from a CLI
 
-
 // App Uses Strict Mode
 //"use strict";
 
@@ -20,7 +19,7 @@ let appKeys = require("./keys.js");
 let spotifySearch = new Spotify(appKeys.spotify);
 
 // --- End Config
-
+// ------------------------------------------------------------
 // --- Begin Application
 
 // Get CLI input
@@ -46,15 +45,23 @@ if (userCMD.length === 2) {
 if (userCMD.length >= 3) {
 
     // Cycle through command options
+
     switch (userCMD[2]) {
+
+
+        // Random
+        // No break to change command to random
+        case 'random-command':
+            userCMD[2] = 'spotify-this';
 
         // Search Bands In Town
         case 'concert-this':
 
             // Missing Parameter
             if (!userCMD[3]) {
-                // ERROR 
-                App.printe('Missing search parameter!');
+                
+                // No search parameter found, set default 
+                userCMD[3] = 'Eminem';
             }
 
             // Begin Search
@@ -84,7 +91,7 @@ if (userCMD.length >= 3) {
 
             // Missing params
             if (!userCMD[3]) {
-                App.printe('Missing Parameters!');
+                userCMD[3] = 'The Sign Ace of Base';
             }
 
             // Search spotify songs
@@ -117,10 +124,12 @@ if (userCMD.length >= 3) {
         // Search OPENMDB
         case 'movie-this':
 
+            // Missing Params
             if (!userCMD[3]) {
                 App.printe('Missing Parameters!');                
             }
 
+            // Movie Search
             if (userCMD[3]) {
                 Axios.get(`http://www.omdbapi.com/?apikey=trilogy&t=${userCMD[3]}`)
                     .catch(function(error) {

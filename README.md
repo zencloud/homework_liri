@@ -21,5 +21,5 @@ Full List:
 concert-this <artist>
 movie-this <movie>
 spotify-this <song>
-do-what-it-says
+random-command
 ```
