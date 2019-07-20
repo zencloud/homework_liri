@@ -27,3 +27,11 @@ do-what-it-says
 ## Preview
 
 ![alt text](imgs/gif.gif)
+
+## Tech
+LIRI is coded in JavaScript using Node
+
+## Dependencies
+* axios
+* moment
+* node-spotify-api
